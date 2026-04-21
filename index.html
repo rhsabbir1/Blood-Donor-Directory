@@ -170,7 +170,7 @@ function render(){
 
 function togglePhone(btn,phone){
   if(btn.dataset.shown){btn.textContent='📞 ফোন নম্বর দেখুন';btn.classList.remove('revealed');delete btn.dataset.shown;}
-  else{btn.textContent='📞 '+(phone||'নম্বর নেই');btn.classList.add('revealed');btn.dataset.shown='1';}
+  else{btn.textContent='📞 +880 '+(phone||'নম্বর নেই');btn.classList.add('revealed');btn.dataset.shown='1';}
 }
 
 document.querySelectorAll('#bloodBtns .bg-btn').forEach(btn=>{
