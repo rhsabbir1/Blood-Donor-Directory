@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>অ্যাডমিন — রক্তদাতা ডিরেক্টরি</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--red:#C0392B;--red-dark:#922B21;--red-light:#FADBD8;--bg:#F5F0EF;--surface:#FFFFFF;--surface2:#F8F4F3;--border:#E5D8D6;--text:#1A0A09;--text2:#6B3A36;--text3:#A07070;--green:#1E8449;--green-bg:#D5F5E3;--radius:10px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans Bengali',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;}
+  .login-box{background:var(--surface);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:360px;border:1px solid var(--border);box-shadow:0 8px 32px rgba(192,57,43,0.1);text-align:center;}
+  .login-box .logo{font-size:3rem;margin-bottom:1rem;}
+  .login-box h1{font-size:1.2rem;font-weight:600;margin-bottom:.25rem;}
+  .login-box p{font-size:13px;color:var(--text3);margin-bottom:1.5rem;}
+  .login-box input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--surface2);margin-bottom:12px;text-align:center;}
+  .login-box input:focus{outline:none;border-color:var(--red);}
+  .btn-login{width:100%;padding:11px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-family:inherit;cursor:pointer;font-weight:500;}
+  .btn-login:hover{background:var(--red-dark);}
+  .login-err{color:var(--red);font-size:12px;margin-top:8px;display:none;}
+  #adminPanel{display:none;}
+  .topbar{background:var(--red-dark);color:#fff;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  .topbar h1{font-size:15px;font-weight:500;}
+  .topbar-btns{display:flex;gap:8px;}
+  .topbar-btn{padding:5px 12px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;font-weight:500;}
+  .btn-add{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);}
+  .btn-logout{background:none;color:rgba(255,255,255,.7);border:none;}
+  .main{max-width:1000px;margin:0 auto;padding:1.5rem 1rem;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem;}
+  .stat-box{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:1rem;text-align:center;}
+  .stat-num{font-size:1.6rem;font-weight:600;color:var(--red);}
+  .stat-lbl{font-size:12px;color:var(--text3);margin-top:3px;}
+  .search-bar{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--surface);color:var(--text);margin-bottom:1rem;}
+  .search-bar:focus{outline:none;border-color:var(--red);}
+  .table-wrap{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;min-width:600px;}
+  thead th{background:var(--surface2);text-align:left;padding:10px 12px;font-size:12px;font-weight:500;color:var(--text2);border-bottom:1px solid var(--border);white-space:nowrap;}
+  tbody tr{border-bottom:1px solid var(--border);}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:var(--surface2);}
+  td{padding:10px 12px;font-size:13px;}
+  .blood-tag{display:inline-block;background:var(--red);color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;}
+  .status-yes{color:var(--green);font-size:12px;font-weight:500;}
+  .status-no{color:var(--text3);font-size:12px;}
+  .action-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;font-weight:500;margin-right:4px;}
+  .btn-edit{background:#EBF5FB;color:#1A5276;border:1px solid #AED6F1;}
+  .btn-delete{background:var(--red-light);color:var(--red-dark);border:1px solid #F1948A;}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem;}
+  .modal-bg.open{display:flex;}
+  .modal{background:var(--surface);border-radius:14px;padding:1.5rem;width:100%;max-width:420px;box-shadow:0 16px 40px rgba(0,0,0,.15);max-height:90vh;overflow-y:auto;}
+  .modal h2{font-size:16px;font-weight:600;margin-bottom:1.25rem;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .form-full{grid-column:1/-1;}
+  label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;margin-top:10px;}
+  .form-input{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;background:var(--surface2);color:var(--text);}
+  .form-input:focus{outline:none;border-color:var(--red);background:#fff;}
+  .modal-actions{display:flex;gap:8px;margin-top:1.25rem;}
+  .modal-actions button{flex:1;padding:10px;border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer;font-weight:500;}
+  .btn-cancel2{background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+  .btn-save2{background:var(--red);color:#fff;border:none;}
+  .btn-save2:disabled{background:#ccc;cursor:not-allowed;}
+  .msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:1rem;display:none;}
+  .msg.success{background:var(--green-bg);color:var(--green);display:block;}
+  .msg.error{background:var(--red-light);color:var(--red-dark);display:block;}
+  .loading{text-align:center;padding:3rem;color:var(--text3);font-size:14px;}
+  .confirm-box{background:var(--surface);border-radius:14px;padding:1.5rem;width:100%;max-width:320px;box-shadow:0 16px 40px rgba(0,0,0,.15);text-align:center;}
+  .confirm-box p{font-size:14px;margin-bottom:1.25rem;line-height:1.6;}
+  .confirm-btns{display:flex;gap:8px;}
+  .confirm-btns button{flex:1;padding:9px;border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<script>
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwf613xl-CEAr0cfC9B9tC3h1yEfm8YkZfRL_MqMRoy7JCUZzfzvo0I4SWlyYbVDyIdgw/exec'; // ← এখানে আপনার URL বসান
+  const ADMIN_PASSWORD = 'blood2024admin'; // ← পাসওয়ার্ড বদলান
+</script>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="logo">🩸</div>
+    <h1>অ্যাডমিন প্যানেল</h1>
+    <p>রক্তদাতা ডিরেক্টরি পরিচালনা</p>
+    <input type="password" id="pwInput" placeholder="পাসওয়ার্ড দিন" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="btn-login" onclick="doLogin()">প্রবেশ করুন</button>
+    <div class="login-err" id="loginErr">❌ ভুল পাসওয়ার্ড</div>
+  </div>
+</div>
+
+<div id="adminPanel">
+  <div class="topbar">
+    <h1>🩸 অ্যাডমিন প্যানেল — রক্তদাতা ডিরেক্টরি</h1>
+    <div class="topbar-btns">
+      <button class="topbar-btn btn-add" onclick="openAdd()">+ নতুন দাতা যোগ</button>
+      <button class="topbar-btn btn-logout" onclick="logout()">লগআউট</button>
+    </div>
+  </div>
+  <div class="main">
+    <div id="msg" class="msg"></div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-num" id="sTotal">—</div><div class="stat-lbl">মোট দাতা</div></div>
+      <div class="stat-box"><div class="stat-num" id="sAvail">—</div><div class="stat-lbl">এখন পাওয়া যাবে</div></div>
+      <div class="stat-box"><div class="stat-num" id="sAPos">—</div><div class="stat-lbl">A+ দাতা</div></div>
+      <div class="stat-box"><div class="stat-num" id="sOPos">—</div><div class="stat-lbl">O+ দাতা</div></div>
+    </div>
+    <input class="search-bar" type="text" id="adminSearch" placeholder="🔎 নাম, ফোন বা এলাকা দিয়ে খুঁজুন..." oninput="renderTable()"/>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>#</th><th>নাম</th><th>রক্ত</th><th>ফোন</th><th>এলাকা</th><th>বিভাগ</th><th>সর্বশেষ দান</th><th>অবস্থা</th><th>অ্যাকশন</th></tr>
+        </thead>
+        <tbody id="tableBody"><tr><td colspan="9" class="loading">⏳ লোড হচ্ছে...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="formModal">
+  <div class="modal">
+    <h2 id="modalTitle">নতুন রক্তদাতা যোগ</h2>
+    <input type="hidden" id="editId"/>
+    <div class="form-grid">
+      <div class="form-full"><label>পূর্ণ নাম *</label><input class="form-input" type="text" id="f_name" placeholder="রক্তদাতার নাম"/></div>
+      <div><label>ফোন নম্বর *</label><input class="form-input" type="text" id="f_phone" placeholder="01XXXXXXXXX"/></div>
+      <div><label>রক্তের গ্রুপ *</label>
+        <select class="form-input" id="f_blood"><option value="">বেছে নিন</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+      <div><label>বিভাগ *</label>
+        <select class="form-input" id="f_div"><option value="">বেছে নিন</option><option>ঢাকা</option><option>চট্টগ্রাম</option><option>রাজশাহী</option><option>খুলনা</option><option>বরিশাল</option><option>সিলেট</option><option>রংপুর</option><option>ময়মনসিংহ</option></select></div>
+      <div class="form-full"><label>জেলা / উপজেলা / এলাকা *</label><input class="form-input" type="text" id="f_area" placeholder="যেমন: মিরপুর-১০"/></div>
+      <div><label>সর্বশেষ রক্তদান</label><input class="form-input" type="date" id="f_date"/></div>
+      <div><label>দিতে পারবেন?</label><select class="form-input" id="f_avail"><option value="হ্যাঁ">হ্যাঁ</option><option value="না">না</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel2" onclick="closeModal()">বাতিল</button>
+      <button class="btn-save2" id="saveBtn" onclick="saveDonor()">💾 সংরক্ষণ করুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="confirmModal">
+  <div class="confirm-box">
+    <p>এই রক্তদাতাকে মুছে ফেলবেন?<br/><strong id="deleteName"></strong></p>
+    <div class="confirm-btns">
+      <button onclick="closeConfirm()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2)">বাতিল</button>
+      <button onclick="confirmDelete()" style="background:var(--red);color:#fff;border:none;">হ্যাঁ, মুছুন</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let donors = [], deleteId = null;
+
+// সব request GET দিয়ে — CORS সমস্যা নেই
+async function api(params) {
+  const url = SHEET_URL + '?' + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(e) { throw new Error('Invalid response: ' + text.slice(0,100)); }
+}
+
+function doLogin() {
+  if (document.getElementById('pwInput').value === ADMIN_PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    loadDonors();
+  } else {
+    const err = document.getElementById('loginErr');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 2000);
+  }
+}
+function logout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('pwInput').value = '';
+}
+
+async function loadDonors() {
+  document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="loading">⏳ লোড হচ্ছে...</td></tr>';
+  try {
+    const data = await api({ action: 'get' });
+    donors = data.donors || [];
+    updateStats(); renderTable();
+  } catch(e) {
+    showMsg('ডেটা লোড হয়নি: ' + e.message, 'error');
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="9" class="loading">⚠️ সংযোগ ত্রুটি</td></tr>';
+  }
+}
+
+function daysSince(d) { if(!d) return 999; return Math.floor((Date.now()-new Date(d))/86400000); }
+function canDonate(d) { return d.available !== 'না' && daysSince(d.lastDonate) >= 90; }
+function fmt(d) { if(!d) return '—'; const dt=new Date(d); return isNaN(dt)?d:`${dt.getDate()}/${dt.getMonth()+1}/${dt.getFullYear()}`; }
+
+function updateStats() {
+  document.getElementById('sTotal').textContent = donors.length;
+  document.getElementById('sAvail').textContent = donors.filter(canDonate).length;
+  document.getElementById('sAPos').textContent = donors.filter(d=>d.blood==='A+').length;
+  document.getElementById('sOPos').textContent = donors.filter(d=>d.blood==='O+').length;
+}
+
+function renderTable() {
+  const q = document.getElementById('adminSearch').value.toLowerCase();
+  const filtered = donors.filter(d => !q ||(d.name||'').toLowerCase().includes(q)||(d.phone||'').includes(q)||(d.area||'').toLowerCase().includes(q));
+  const tbody = document.getElementById('tableBody');
+  if (!filtered.length) { tbody.innerHTML='<tr><td colspan="9" class="loading">কোনো ফলাফল নেই</td></tr>'; return; }
+  tbody.innerHTML = filtered.map((d,i) => `
+    <tr>
+      <td style="color:var(--text3)">${i+1}</td>
+      <td><strong>${d.name||''}</strong></td>
+      <td><span class="blood-tag">${d.blood||'?'}</span></td>
+      <td style="font-family:monospace;font-size:12px">${d.phone||'—'}</td>
+      <td>${d.area||'—'}</td>
+      <td>${d.division||'—'}</td>
+      <td style="font-size:12px">${fmt(d.lastDonate)}</td>
+      <td>${canDonate(d)?'<span class="status-yes">✓ পারবেন</span>':'<span class="status-no">✗ পারবেন না</span>'}</td>
+      <td>
+        <button class="action-btn btn-edit" onclick='openEdit(${JSON.stringify(d).replace(/'/g,"&#39;")})'>✏️ এডিট</button>
+        <button class="action-btn btn-delete" onclick="askDelete('${d.id}','${(d.name||'').replace(/'/g,'')}')">🗑️ মুছুন</button>
+      </td>
+    </tr>`).join('');
+}
+
+function openAdd() {
+  document.getElementById('modalTitle').textContent = '+ নতুন রক্তদাতা যোগ';
+  document.getElementById('editId').value = '';
+  ['f_name','f_phone','f_area','f_date'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_blood').value=''; document.getElementById('f_div').value=''; document.getElementById('f_avail').value='হ্যাঁ';
+  document.getElementById('formModal').classList.add('open');
+}
+function openEdit(d) {
+  document.getElementById('modalTitle').textContent = '✏️ তথ্য সম্পাদনা';
+  document.getElementById('editId').value = d.id;
+  document.getElementById('f_name').value = d.name||''; document.getElementById('f_phone').value = d.phone||'';
+  document.getElementById('f_blood').value = d.blood||''; document.getElementById('f_div').value = d.division||'';
+  document.getElementById('f_area').value = d.area||''; document.getElementById('f_date').value = d.lastDonate||'';
+  document.getElementById('f_avail').value = d.available||'হ্যাঁ';
+  document.getElementById('formModal').classList.add('open');
+}
+function closeModal() { document.getElementById('formModal').classList.remove('open'); }
+
+async function saveDonor() {
+  const name=document.getElementById('f_name').value.trim(), phone=document.getElementById('f_phone').value.trim();
+  const blood=document.getElementById('f_blood').value, division=document.getElementById('f_div').value;
+  const area=document.getElementById('f_area').value.trim(), lastDonate=document.getElementById('f_date').value;
+  const available=document.getElementById('f_avail').value, id=document.getElementById('editId').value;
+  if (!name||!phone||!blood||!division||!area) { showMsg('❗ সব তারকা (*) চিহ্নিত তথ্য দিন।','error'); return; }
+  const btn = document.getElementById('saveBtn');
+  btn.disabled=true; btn.textContent='⏳ সংরক্ষণ হচ্ছে...';
+  try {
+    const params = {action:id?'update':'add', name, phone, blood, division, area, lastDonate, available};
+    if (id) params.id = id;
+    const data = await api(params);
+    if (data.success||data.id) {
+      closeModal();
+      showMsg(id?'✅ তথ্য আপডেট হয়েছে!':'✅ নতুন রক্তদাতা যোগ হয়েছে!','success');
+      await loadDonors();
+    } else { showMsg('❌ ত্রুটি: '+(data.error||'অজানা'),'error'); }
+  } catch(e) { showMsg('❌ ব্যর্থ: '+e.message,'error'); }
+  finally { btn.disabled=false; btn.textContent='💾 সংরক্ষণ করুন'; }
+}
+
+function askDelete(id,name) { deleteId=id; document.getElementById('deleteName').textContent=name; document.getElementById('confirmModal').classList.add('open'); }
+function closeConfirm() { document.getElementById('confirmModal').classList.remove('open'); }
+async function confirmDelete() {
+  closeConfirm();
+  try {
+    const data = await api({action:'delete', id:deleteId});
+    if (data.success) { showMsg('✅ মুছে ফেলা হয়েছে।','success'); await loadDonors(); }
+    else showMsg('❌ মুছতে ব্যর্থ: '+(data.error||''),'error');
+  } catch(e) { showMsg('❌ ত্রুটি: '+e.message,'error'); }
+}
+
+function showMsg(text,type) {
+  const el=document.getElementById('msg'); el.textContent=text; el.className='msg '+type;
+  setTimeout(()=>el.className='msg',4000);
+}
+document.getElementById('formModal').addEventListener('click',e=>{ if(e.target===document.getElementById('formModal'))closeModal(); });
+document.getElementById('confirmModal').addEventListener('click',e=>{ if(e.target===document.getElementById('confirmModal'))closeConfirm(); });
+</script>
+</body>
+</html>
