@@ -57,8 +57,57 @@
   .no-result{text-align:center;padding:4rem 1rem;color:var(--text3);font-size:14px;grid-column:1/-1;}
   .no-result div{font-size:3rem;margin-bottom:1rem;}
   footer{text-align:center;padding:2rem 1rem;font-size:12px;color:var(--text3);border-top:1px solid var(--border);margin-top:2rem;}
+  .admin-link{color:var(--border);text-decoration:none;font-size:11px;}
+  .admin-link:hover{color:var(--text3);}
   @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .donor-card{animation:fadeIn .3s ease both;}
+
+  /* REGISTER BUTTON */
+  .hero-register-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    margin-top:1.25rem;padding:11px 24px;
+    background:#fff;color:var(--red-dark);
+    border:none;border-radius:10px;
+    font-size:14px;font-weight:600;font-family:inherit;
+    cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15);
+    transition:transform .15s,box-shadow .15s;
+  }
+  .hero-register-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2);}
+  .hero-register-btn:active{transform:translateY(0);}
+
+  /* REGISTER MODAL */
+  .reg-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center;z-index:200;padding:0;}
+  .reg-overlay.open{display:flex;}
+  @media(min-width:600px){.reg-overlay{align-items:center;padding:1rem;}}
+  .reg-modal{
+    background:#fff;width:100%;max-width:480px;
+    border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2rem;
+    box-shadow:0 -8px 40px rgba(0,0,0,.15);
+    max-height:92vh;overflow-y:auto;
+  }
+  @media(min-width:600px){.reg-modal{border-radius:16px;padding:1.75rem 1.5rem;}}
+  .reg-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1.25rem;}
+  @media(min-width:600px){.reg-handle{display:none;}}
+  .reg-modal h2{font-size:17px;font-weight:600;margin-bottom:.25rem;color:var(--text);}
+  .reg-modal p{font-size:13px;color:var(--text3);margin-bottom:1.25rem;}
+  .reg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .reg-full{grid-column:1/-1;}
+  .reg-label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;margin-top:10px;font-weight:500;}
+  .reg-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--surface2);color:var(--text);transition:border-color .2s;}
+  .reg-input:focus{outline:none;border-color:var(--red);background:#fff;}
+  .reg-submit{
+    width:100%;margin-top:1.25rem;padding:13px;
+    background:var(--red);color:#fff;border:none;
+    border-radius:10px;font-size:15px;font-weight:600;
+    font-family:inherit;cursor:pointer;transition:background .15s;
+  }
+  .reg-submit:hover{background:var(--red-dark);}
+  .reg-submit:disabled{background:#ccc;cursor:not-allowed;}
+  .reg-cancel{width:100%;margin-top:8px;padding:10px;background:none;border:none;font-size:13px;color:var(--text3);font-family:inherit;cursor:pointer;}
+  .reg-success{text-align:center;padding:2rem 1rem;}
+  .reg-success .big-icon{font-size:3.5rem;margin-bottom:1rem;}
+  .reg-success h3{font-size:18px;font-weight:600;margin-bottom:.5rem;color:var(--green);}
+  .reg-success p{font-size:14px;color:var(--text2);}
 </style>
 </head>
 <body>
@@ -75,6 +124,11 @@
     <div class="hero-stat"><div class="hero-stat-num" id="statTotal">—</div><div class="hero-stat-label">মোট দাতা</div></div>
     <div class="hero-stat"><div class="hero-stat-num" id="statAvail">—</div><div class="hero-stat-label">এখন পাওয়া যাবে</div></div>
     <div class="hero-stat"><div class="hero-stat-num" id="statDivisions">—</div><div class="hero-stat-label">বিভাগ</div></div>
+  </div>
+  <div>
+    <button class="hero-register-btn" onclick="openRegister()">
+      🩸 রক্তদাতা হিসেবে নিবন্ধন করুন
+    </button>
   </div>
 </div>
 
@@ -105,7 +159,9 @@
     <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#A07070;">⏳ ডেটা লোড হচ্ছে...</div>
   </div>
 </div>
-<footer>রক্তদাতা ডিরেক্টরি — বাংলাদেশ &nbsp;|&nbsp; রক্ত দিন, জীবন বাঁচান 🩸</footer>
+<footer>রক্তদাতা ডিরেক্টরি — বাংলাদেশ &nbsp;|&nbsp; রক্ত দিন, জীবন বাঁচান 🩸
+  <br/><br/><a href="admin.html" class="admin-link">⚙</a>
+</footer>
 
 <script>
 let allDonors=[], bloodFilter='';
@@ -170,7 +226,7 @@ function render(){
 
 function togglePhone(btn,phone){
   if(btn.dataset.shown){btn.textContent='📞 ফোন নম্বর দেখুন';btn.classList.remove('revealed');delete btn.dataset.shown;}
-  else{btn.textContent='📞 +880 '+(phone||'নম্বর নেই');btn.classList.add('revealed');btn.dataset.shown='1';}
+  else{btn.textContent='📞 '+(phone||'নম্বর নেই');btn.classList.add('revealed');btn.dataset.shown='1';}
 }
 
 document.querySelectorAll('#bloodBtns .bg-btn').forEach(btn=>{
@@ -193,5 +249,120 @@ document.getElementById('clearBtn').addEventListener('click',()=>{
 });
 loadDonors();
 </script>
+<!-- REGISTRATION MODAL -->
+<div class="reg-overlay" id="regOverlay">
+  <div class="reg-modal" id="regModal">
+    <div class="reg-handle"></div>
+    <div id="regForm">
+      <h2>🩸 রক্তদাতা নিবন্ধন</h2>
+      <p>আপনার তথ্য দিন — যে কেউ আপনাকে খুঁজে পাবে</p>
+      <div class="reg-grid">
+        <div class="reg-full">
+          <label class="reg-label">পূর্ণ নাম *</label>
+          <input class="reg-input" type="text" id="r_name" placeholder="আপনার নাম লিখুন"/>
+        </div>
+        <div>
+          <label class="reg-label">ফোন নম্বর *</label>
+          <input class="reg-input" type="tel" id="r_phone" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div>
+          <label class="reg-label">রক্তের গ্রুপ *</label>
+          <select class="reg-input" id="r_blood">
+            <option value="">বেছে নিন</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div>
+          <label class="reg-label">বিভাগ *</label>
+          <select class="reg-input" id="r_div">
+            <option value="">বেছে নিন</option>
+            <option>ঢাকা</option><option>চট্টগ্রাম</option><option>রাজশাহী</option>
+            <option>খুলনা</option><option>বরিশাল</option><option>সিলেট</option>
+            <option>রংপুর</option><option>ময়মনসিংহ</option>
+          </select>
+        </div>
+        <div class="reg-full">
+          <label class="reg-label">জেলা / উপজেলা / এলাকা *</label>
+          <input class="reg-input" type="text" id="r_area" placeholder="যেমন: মিরপুর-১০, ঢাকা"/>
+        </div>
+        <div class="reg-full">
+          <label class="reg-label">সর্বশেষ রক্তদানের তারিখ (থাকলে)</label>
+          <input class="reg-input" type="date" id="r_date"/>
+        </div>
+      </div>
+      <div id="regErr" style="display:none;margin-top:10px;padding:8px 12px;background:var(--red-light);color:var(--red-dark);border-radius:8px;font-size:13px;"></div>
+      <button class="reg-submit" id="regSubmit" onclick="submitRegister()">✅ নিবন্ধন করুন</button>
+      <button class="reg-cancel" onclick="closeRegister()">বাতিল</button>
+    </div>
+    <div id="regSuccess" class="reg-success" style="display:none">
+      <div class="big-icon">🎉</div>
+      <h3>ধন্যবাদ!</h3>
+      <p>আপনার নিবন্ধন সফল হয়েছে।<br/>আপনি এখন রক্তদাতার তালিকায় আছেন।</p>
+      <button class="reg-submit" style="margin-top:1.5rem" onclick="closeRegister()">ঠিক আছে</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function openRegister() {
+  document.getElementById('regOverlay').classList.add('open');
+  document.getElementById('regForm').style.display='block';
+  document.getElementById('regSuccess').style.display='none';
+  document.getElementById('regErr').style.display='none';
+}
+function closeRegister() {
+  document.getElementById('regOverlay').classList.remove('open');
+  ['r_name','r_phone','r_area','r_date'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('r_blood').value='';
+  document.getElementById('r_div').value='';
+}
+
+async function submitRegister() {
+  const name  = document.getElementById('r_name').value.trim();
+  const phone = document.getElementById('r_phone').value.trim();
+  const blood = document.getElementById('r_blood').value;
+  const div   = document.getElementById('r_div').value;
+  const area  = document.getElementById('r_area').value.trim();
+  const date  = document.getElementById('r_date').value;
+  const errEl = document.getElementById('regErr');
+
+  if (!name||!phone||!blood||!div||!area) {
+    errEl.textContent='❗ তারকা (*) চিহ্নিত সব তথ্য দিন।';
+    errEl.style.display='block'; return;
+  }
+  if (!/^01[0-9]{9}$/.test(phone)) {
+    errEl.textContent='❗ সঠিক ফোন নম্বর দিন (01XXXXXXXXX)।';
+    errEl.style.display='block'; return;
+  }
+  errEl.style.display='none';
+
+  const btn = document.getElementById('regSubmit');
+  btn.disabled=true; btn.textContent='⏳ নিবন্ধন হচ্ছে...';
+
+  try {
+    const params = {action:'add', name, phone, blood, division:div, area, lastDonate:date, available:'হ্যাঁ'};
+    const res = await fetch(SHEET_URL + '?' + new URLSearchParams(params).toString());
+    const data = await res.json();
+    if (data.success||data.id) {
+      document.getElementById('regForm').style.display='none';
+      document.getElementById('regSuccess').style.display='block';
+      await loadDonors(); // তালিকা রিফ্রেশ করুন
+    } else {
+      errEl.textContent='❌ ত্রুটি হয়েছে, আবার চেষ্টা করুন।';
+      errEl.style.display='block';
+    }
+  } catch(e) {
+    errEl.textContent='❌ সংযোগ ত্রুটি: '+e.message;
+    errEl.style.display='block';
+  } finally {
+    btn.disabled=false; btn.textContent='✅ নিবন্ধন করুন';
+  }
+}
+
+// overlay click to close
+document.getElementById('regOverlay').addEventListener('click', e=>{
+  if(e.target===document.getElementById('regOverlay')) closeRegister();
+});
+</script>
 </body>
-</html>
